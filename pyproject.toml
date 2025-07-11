@@ -1,0 +1,53 @@
+# pyproject.toml
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "s2gos-example-app"
+version = "0.0.1"
+description = "Simple S2GOS application with scene generation and observation simulation"
+authors = [{ name = "Nicolae Marton", email = "nicolae.marton@rayference.eu" }]
+license = { text = "Apache-2.0" }
+readme = "README.md"
+requires-python = ">=3.11"
+
+[project.entry-points."s2gos.processes"]
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-64", "win-64"]
+
+[tool.pixi.dependencies]
+python = ">=3.11"
+
+[tool.pixi.pypi-dependencies]
+# DEV
+ipykernel = "*"
+s2gos-common = { path = "./ext/s2gos-controller/s2gos-common", editable = true }
+s2gos-client = { path = "./ext/s2gos-controller/s2gos-client", editable = true }
+s2gos-server = { path = "./ext/s2gos-controller/s2gos-server", editable = true }
+s2gos-scene-description = { path = "./ext/s2gos-scene-description", editable = true }
+s2gos-simulator = { path = "./ext/s2gos-simulator", editable = true }
+s2gos-generator = { path = "./ext/s2gos-generator", editable = true }
+s2gos-example-app = { path = ".", editable = true }
+
+[project.optional-dependencies]
+test = ["pytest"]
+dev = []
+docs = ["mkdocs"]
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+dev = { features = ["dev", "test", "docs"], solve-group = "default" }
+test = { features = ["test"], solve-group = "default" }
+
+[tool.pixi.tasks]
+# Development tasks
+dev = { cmd = "s2gos-server dev --service=s2gos_example_app.app:service" }
+test = "pytest src/tests/"
+lint = "ruff check src/"
+format = "ruff format src/"
+
+# Build and install
+build = "python -m build"
+install-local = "pip install -e ."
